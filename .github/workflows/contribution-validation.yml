@@ -36,8 +36,8 @@ jobs:
         run: npm test
       - name: Regression test file ordering
         run: |
-          node node_modules/mocha/bin/mocha.js test/combine.test.js test/colorize.test.js
-          node node_modules/mocha/bin/mocha.js test/colorize.test.js test/combine.test.js
+          node -e "const Mocha=require('mocha');const runner=new Mocha();runner.addFile('test/combine.test.js');runner.addFile('test/colorize.test.js');runner.run(failures=>{process.exitCode=failures?1:0})"
+          node -e "const Mocha=require('mocha');const runner=new Mocha();runner.addFile('test/colorize.test.js');runner.addFile('test/combine.test.js');runner.run(failures=>{process.exitCode=failures?1:0})"
       - name: Upstream TypeScript gate
         if: always()
         run: npx --yes --package typescript tsc
