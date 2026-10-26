@@ -6,7 +6,7 @@ permissions:
   contents: read
 jobs:
   baseline:
-    name: baseline / Node ${{ matrix.node }}
+    name: candidate / Node ${{ matrix.node }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout exact source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
-          ref: 7a35d257c0157793ccd0dda23c4f89788be8f05a
+          ref: 331942722dec38b505c4a32f6ca73493907348e1
           persist-credentials: false
       - name: Set up Node
         uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238
@@ -34,6 +34,10 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Full test suite
         run: npm test
+      - name: Regression test file ordering
+        run: |
+          node node_modules/mocha/bin/mocha.js test/combine.test.js test/colorize.test.js
+          node node_modules/mocha/bin/mocha.js test/colorize.test.js test/combine.test.js
       - name: Upstream TypeScript gate
         if: always()
         run: npx --yes --package typescript tsc
